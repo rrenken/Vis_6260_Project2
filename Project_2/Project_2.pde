@@ -1,3 +1,4 @@
+
 import controlP5.*;
 
 import interfascia.*;
@@ -8,11 +9,11 @@ import processing.data.*;
 
 import g4p_controls.*;
 
-Table table;
-Table table2;
-Table table3;
+Table table; //USA
+Table table2; // European
+Table table3; // Japanese
 
-int isActive = 0;
+int isActive = 0; // variables function -- countries
 
 GPlot plot1;
 
@@ -76,11 +77,13 @@ ArrayList<String> CarData_3time = new ArrayList<String>();
 ArrayList<String> CarData_3year = new ArrayList<String>();
 ArrayList<String> CarData_3orgn = new ArrayList<String>();
 
+
+
 void setup() {
  // size(2000,1300);
   size(1750,850);
   
-  loadData();
+  loadData(); // loads lines from website line by line
   getEng_Dspl();
   getNoCylinders();
   getCarNames();
@@ -132,6 +135,7 @@ void setup() {
      .setLabel("1. American")
      .getCaptionLabel().setFont(createFont("Arial Black", 20));
      
+
   cp7.addButton("Button3")
      .setPosition(840, height - 100)
      .setSize(190, 90)
@@ -309,12 +313,14 @@ void loadData() {
   }
 }
 
+// many array lists (columns of the data), each button calls out an individual array list to plot
+
 void getCarNames() {
   if (lines != null) {
     int count1 = 0;
     for (int i = 15; i < 421; i++) {
       String Name = lines[i];
-      carNamee.add(Name);
+      carNamee.add(Name); // adds each variable to the array list
       count1++;
     } //println(count1);
   } else {
@@ -417,6 +423,7 @@ void getCar_Orgn() {
   }
 }
 
+// black overview plot
   void drawScatterPlot1() {
   plot1 = new GPlot(this);
   plot1.setPos(0, 0);
@@ -432,6 +439,7 @@ void getCar_Orgn() {
   ArrayList<Float> Acc_TimeFloat = new ArrayList<Float>();
   dataPoints = new GPointsArray();
   
+  // converting array lists to float types and stores in new array list
   for (String wght : Veh_Wgh) {
     Veh_WghFloat.add(Float.parseFloat(wght));
   }
@@ -439,14 +447,16 @@ void getCar_Orgn() {
     Acc_TimeFloat.add(Float.parseFloat(time));
   }
 
+// gets values
   for (int i = 0; i < Veh_WghFloat.size(); i++) {
     float xValue = Veh_WghFloat.get(i);
     float yValue = Acc_TimeFloat.get(i);
-    dataPoints.add(yValue, xValue);
+    dataPoints.add(yValue, xValue); // "dataPoints" part of the libaray and stores the data points
     plot1.setPoints(dataPoints);
     plot1.activateZooming();
     plot1.activatePanning();    
     
+    //shows car names on hover
     if (dist(mouseX, mouseY, yValue, xValue) < 9) {
       println("works");
       fill(0); // Change fill color for hover
@@ -457,7 +467,7 @@ void getCar_Orgn() {
 
 void Button1(int theValue) {
   
-  drawScatterPlot1();
+  drawScatterPlot1(); // overview
   
 }
 
@@ -478,11 +488,11 @@ void Button2(int theValue) {
   
   }
   void Button5(int theValue) {
-    if(isActive == 1){
+    if(isActive == 1){ // 1 active for USA
     xAxisMpg1();
-    }else if(isActive ==2){
+    }else if(isActive ==2){ // 2 active for Euro
       xAxisMpg2();
-    }else if(isActive == 3){
+    }else if(isActive == 3){ // 3 Japanese
       xAxisMpg3();
     }
     else{
@@ -559,12 +569,14 @@ void Button2(int theValue) {
     }
   }
  
+ // loads each separate attribute data array or each country
+ // referencing from variables created above
   void printColumn1(int columnIndex) {
   if (columnIndex >= 0 && columnIndex < dataArrayList.size()) {
     ArrayList<String> columnData = dataArrayList.get(columnIndex);
     
     for (String value : columnData) {
-      CarData_1Names.add(value);   
+      CarData_1Names.add(value);   // car names for USA
     }
     for (String test : CarData_1Names) {
       //println(test);
@@ -672,7 +684,7 @@ void printColumn21(int columnIndex) {
     ArrayList<String> columnData1 = dataArrayList2.get(columnIndex);
     
     for (String value : columnData1) {
-      CarData_2Names.add(value);   
+      CarData_2Names.add(value);   // names for Euro
     }
     for (String test : CarData_2Names) {
       //println(test);
@@ -780,7 +792,7 @@ void printColumn31(int columnIndex) {
     ArrayList<String> columnData2 = dataArrayList3.get(columnIndex);
     
     for (String value : columnData2) {
-      CarData_3Names.add(value);   
+      CarData_3Names.add(value);   // names Japanese
     }
     for (String test : CarData_3Names) {
       //println(test);
@@ -884,6 +896,7 @@ void printColumn39(int columnIndex) {
   }
 }
 
+// other plots
 void showAmerican(){
   plot1.getTitle().setText("American Cars");
   plot1.getXAxis().getAxisLabel().setText("Time to Accelerate 0 - 60 (Secs)");
@@ -970,17 +983,18 @@ void showJapanese(){
 } 
 }
 
+// clicking buttons along righthand side
 void xAxisYear1(){
   plot1.getTitle().setText("American Cars");
   plot1.getXAxis().getAxisLabel().setText("Time to Accelerate 0 - 60 (Secs)");
   plot1.getYAxis().getAxisLabel().setText("Model Year (Years)");
   
-  ArrayList<Float> Acc_TimeFloatCarData_1 = new ArrayList<Float>();
+  ArrayList<Float> Acc_TimeFloatCarData_1 = new ArrayList<Float>(); // converting original array lists to float types
   ArrayList<Float> CarData_1yearFloat1 = new ArrayList<Float>();
-  GPointsArray newDataPoints12 = new GPointsArray();
+  GPointsArray newDataPoints12 = new GPointsArray(); // part of the library to store array of points to plot
   
   for (String time : CarData_1time) {
-    Acc_TimeFloatCarData_1.add(Float.parseFloat(time));
+    Acc_TimeFloatCarData_1.add(Float.parseFloat(time)); // converting from string to float list used to plot (using "time" as index)
   }
    
    for (String yearr : CarData_1year) {
@@ -989,9 +1003,9 @@ void xAxisYear1(){
   
   
   for (int i = 0; i < Acc_TimeFloatCarData_1.size(); i++) {
-    float xValue1 = Acc_TimeFloatCarData_1.get(i);
+    float xValue1 = Acc_TimeFloatCarData_1.get(i); // start from beginning
     float yValue255 = CarData_1yearFloat1.get(i);
-    newDataPoints12.add(xValue1, yValue255);
+    newDataPoints12.add(xValue1, yValue255); // adding points to the gpoint array
     plot1.setPoints(newDataPoints12);
     plot1.setPointColor(color(255, 0, 0));
 
@@ -1340,7 +1354,7 @@ void xAxisEngDsp3(){
   plot1.getYAxis().getAxisLabel().setText("Engine Displacement");
   
  
-  ArrayList<Float> Acc_TimeFloatCarData_3 = new ArrayList<Float>();
+  ArrayList<Float> Acc_TimeFloatCarData_3 = new ArrayList<Float>(); 
   ArrayList<Float> CarData_3EngnFloat3 = new ArrayList<Float>();
   GPointsArray newDataPoints333 = new GPointsArray();
   
