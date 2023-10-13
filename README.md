@@ -21,7 +21,9 @@ In the search bar, type "ControlP5" and click on the correct resulting library l
 Once the installation is complete, please repeat these steps for the following libraries:
 
 interfascia , 
+
 grafica , 
+
 g4p  
 
 
