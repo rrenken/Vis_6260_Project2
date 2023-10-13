@@ -28,7 +28,7 @@ g4p
 
 
 # Data Collection
-The data used for this project is hosted on a webpage along with other metadata associated with the data values. To load the data into our Processing program, we used a web scraping approach that allows us to store specific lines of data from the webpage directly into our program. Since the car names and attributes are separated by other text in the webpage HTML, we scrape each separately and store them as tables and merge them together.
+The data used for this project is hosted on a webpage along with other metadata associated with the data values. To load the data into our Processing program, we used a web scraping approach that allows us to store specific lines of data from the webpage directly into our program. Since the car names and attributes are separated by other text in the webpage HTML, we scrape each group separately and store them as tables before merging them together.
 
 
 # Interaction
