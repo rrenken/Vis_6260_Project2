@@ -20,10 +20,9 @@ In the search bar, type "ControlP5" and click on the correct resulting library l
 ### Step 3
 Once the installation is complete, please repeat these steps for the following libraries:
 
-interfascia
-grafica
-processing.data
-g4p
+interfascia , 
+grafica , 
+g4p  
 
 
 # Data Collection
