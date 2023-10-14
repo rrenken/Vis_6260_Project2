@@ -1,8 +1,28 @@
+// DATA 6260 - Project #2 - Vehicle Analysis
+// Ryan Renken & Elvis Chukwuani
+
+// The data used in this analysis was web scraped from a website used as a part of the 1983 Exposition of Statistical Graphics Technology.
+// There are 406 cars inlcuded in this dataset.
+// Car Attributes include: MPG (miles per gallon), number of cyclinders, engine displacement, horsepower, weight, acceleration, model year, and the region of origin.
+
+// This scatter plot visualization enables users to analyze vehicle acceleration performance trends as they relate to all other car attributes.
+// Acceleration is a variable of time - the amount of time in seconds it takes a car to go from 0 mph to 60 mph
+
+// There are buttons along the righthand side of the output window that allow users to toggle through the different attributes shown as the X-axis in the plot.
+// To drill down further, clicking the region buttons along the bottom will filter the plot to only show cars from the selected region (American, European, or Japanese).
+// The default view of all the attribute buttons is the 'Overall View'
+
+
+// Prior to running this code, please navigate to the 'Manage Libraries...' option under the 'Sketch' tab in the toolbar and install the following libraries:
+
 import controlP5.*;
 import interfascia.*;
 import grafica.*;
 import processing.data.*;
 import g4p_controls.*;
+
+
+
 
 Table table; // attributes table
 Table carNames; // car names table
@@ -31,13 +51,16 @@ ControlP5 cp16;
 
 void setup() {
   size(1750,850);
-  loadData();
-  loadNames();
+  loadData(); 
+  loadNames(); 
   mergeTables();
+  
+  table.print();                // print merged table (shows values before cleaning is done)
   
   plot1 = new GPlot(this);
   drawScatterPlot1();
   
+  // Button setup
   cp5 = new ControlP5(this);
   cp6 = new ControlP5(this);
   cp7 = new ControlP5(this);
@@ -66,26 +89,26 @@ void setup() {
   
   cp5.addButton("Button1")
     //.setPosition(240, 1130)
-     .setPosition(240, height - 100)
+     .setPosition(100, height - 165)
      .setSize(190, 90)
      .setLabel("Overall View")
      .getCaptionLabel().setFont(createFont("Arial Black", 20));
      
   cp6.addButton("Button2")
-     .setPosition(540, height - 100)//300 950
+     .setPosition(400, height - 165)//300 950
      .setSize(190, 90)
      .setLabel("1. American")
      .getCaptionLabel().setFont(createFont("Arial Black", 20));
      
 
   cp7.addButton("Button3")
-     .setPosition(840, height - 100)
+     .setPosition(700, height - 165)
      .setSize(190, 90)
      .setLabel("2. European")
      .getCaptionLabel().setFont(createFont("Arial Black", 20));
      
   cp8.addButton("Button4")
-     .setPosition(1140, height - 100)
+     .setPosition(1000, height - 165)
      .setSize(190, 90)
      .setLabel("3. Japanese")
      .getCaptionLabel().setFont(createFont("Arial Black", 20));
@@ -141,14 +164,14 @@ void setup() {
      .setColorForeground(color(204, 100, 20))
      .getCaptionLabel().setFont(createFont("Arial Black", 20));
   
-  
+ 
 }
 
 void draw() {
  // background(255);
  // fill(0);
-  text("1983 ASA Data Exposition - Car Analysis", 0, 10);
-  text("goood", 1000, 500);
+ // text("1983 ASA Data Exposition - Car Analysis", 0, 10);
+ // text("goood", 1000, 500);
   background(225, 230, 218);
   plot1.beginDraw();
   plot1.drawBackground();
@@ -170,6 +193,8 @@ void draw() {
   String message5 = "Model Year";
   String message6 = "Car Origin";
   
+  String message7 = "**Cars with null values for the selected attribute are not depicted in the scatter plot**";
+  
   textSize(24); // Font size
   fill(0); // Fill color (black)
 
@@ -182,11 +207,15 @@ void draw() {
   text(message4, width - 300, 485);
   text(message5, width - 300, 585);
   text(message6, width - 300, 685);
+  
+  textSize(18);
+  fill(100);
+  text(message7, width - 700, height - 15);
  
 
   
-  
-/* Display the table data
+  /*
+ // Display the table data
   float x = width - 500;
   float y = 50;
   //float x2 = width - 500;
@@ -198,16 +227,16 @@ void draw() {
     }}
   for (int i = 0; i < carNames.getRowCount(); i++) {
       String carName = carNames.getString(i, "CarName");
-      text(carName, x2, y2 + i * 20);
-    }}*/
+      text(carName, x, y + i * 20);
+    } */
 }
 
-
+// Web scraping the car attributes and storing as a table
 void loadData() {
   String url = "http://lib.stat.cmu.edu/datasets/cars.data";
-  String[] lines = loadStrings(url);
+  String[] lines = loadStrings(url);    // loads content of the website and splits each line into an array of strings
 
-  // Create an empty table with the appropriate number of columns
+  // Create an empty table and add columns with appropriate names
   table = new Table();
   table.addColumn("MPG");
   table.addColumn("Cylinders");
@@ -218,22 +247,31 @@ void loadData() {
   table.addColumn("Model Year");
   table.addColumn("Origin");
 
-  int currentColumn = 0; // Track the current column index
+  int currentColumn = 0; // variable to keep track of which column is 'currently' being processed in the next step
 
-  // Extract the data from lines 425 to 830 and add it to the table
-  for (int i = 424; i < 830; i++) { // Lines are 0-based
-    String line = lines[i];
-    String[] values = splitTokens(line, " ");
-    TableRow newRow = table.addRow();
-    for (String value : values) {
-      newRow.setString(currentColumn, value);
-      currentColumn++; // Move to the next column
+  // Extracting data from lines 425 to 830 and add it to the table
+  for (int i = 424; i < 830; i++) {               // starts a loop that goes through lines 425 through 830
+    String line = lines[i];                       // extract a single line [i] as identified in previous step
+    String[] values = splitTokens(line, " ");     // using a space as a delimeter between values within each individual line
+    TableRow newRow = table.addRow();             // Add this identified row to the empty table we created before
+    for (String value : values) {                 // loop that goes through each value row of values
+    if (value.equals("NA")) {
+      newRow.setString(currentColumn, null); }    // converts NA values to null/NaN
+      else {
+      newRow.setString(currentColumn, value);     // assigns the the current value in the row being processed to the corresponding column
+      }
+      
+      
+      currentColumn++;                            // Move to the next column
     }
-    currentColumn = 0; // Reset the column index for the next row
-  }
+   // println(currentColumn);
+    currentColumn = 0;                            // Reset the column index for the next row before looping through the next line [i]
+  
 }
 
-// Extracting just the car names
+ }
+
+// Extracting just the car names (same process as looping through attributes without needing to process values in each line)
 void loadNames() {
   String url = "http://lib.stat.cmu.edu/datasets/cars.data";
   String[] lines = loadStrings(url);
@@ -255,11 +293,13 @@ void loadNames() {
 // merging the car names table to the attributes table
 void mergeTables() {
   table.addColumn("CarName", Table.STRING);
-  for (int i = 0; i < carNames.getRowCount(); i++){
+  for (int i = 0; i < carNames.getRowCount(); i++){      // loop through each row in the car names table
     TableRow tableRow = table.getRow(i);
     TableRow carNamesRow = carNames.getRow(i);
     tableRow.setString("CarName", carNamesRow.getString("CarName"));
+
   }
+ 
 }
 
 //drawing the scatter plot
@@ -268,7 +308,7 @@ void drawScatterPlot1() {
   plot1.setPos(0,0);
   plot1.setDim(width - 500, height - 300);
   plot1.getTitle().setText("CAR DATA");
-  plot1.getXAxis().setAxisLabelText(getSelectedAttributeLabel());
+  plot1.getXAxis().setAxisLabelText(getSelectedAttributeLabel());          // Using a new funtion to show the selected Attribute as a label
   plot1.getYAxis().setAxisLabelText("Time to Accelerate 0 - 60 (Secs)");
   plot1.setPointColor(color(0, 0, 0, 255));
   plot1.setPointSize(10);
@@ -276,6 +316,7 @@ void drawScatterPlot1() {
   float[] xValues = new float[table.getRowCount()];
   float[] yValues = new float[table.getRowCount()];
   GPointsArray newDataPoints = new GPointsArray();
+  
   
   float Q1 = calculateQ1(yValues);
   float Q3 = calculateQ3(yValues);
@@ -289,8 +330,10 @@ void drawScatterPlot1() {
 
 for (int i = 0; i < table.getRowCount(); i++) {
     String carName1 = carNames.getString(i, "CarName");
-    float xValue = table.getFloat(i, selectedXColumn);
-    float yValue = table.getFloat(i, 5);
+    if (selectedXColumn >= 0) {                          // only considers values >= 0  --  filters out null values
+    float xValue = table.getFloat(i, selectedXColumn);   // assign the selected column as the xValue in scatter plot
+    float yValue = table.getFloat(i, 5);                 // assign the 5th column (Acceleration) as the yValue in scatter plot
+   
     xValues[i] = xValue;
     float mean = mean(xValues);
     float stdDev = standardDeviation(xValues);
@@ -320,7 +363,7 @@ for (int i = 0; i < table.getRowCount(); i++) {
     //    newDataPoints.add(xValue, yValue, carName1);
     //}
 }
-
+}
   
   
   //for (int i = 0; i < table.getRowCount(); i++) {
@@ -339,7 +382,11 @@ for (int i = 0; i < table.getRowCount(); i++) {
   plot1.activatePointLabels();
   plot1.activateZooming();
   plot1.activatePanning();
+  
+  
+ 
 }
+
 
 String getSelectedAttributeLabel() {
   String[] attributeLabels = {"Miles Per Gallon", "No of Cylinders", "Engine Displacement", "Horsepower", "Vehicle Weight", "Acceleration", "Model Year", "Car Origin"};
@@ -410,7 +457,7 @@ void filterByOrigin(int origin) {
   for (int i = 0; i < table.getRowCount(); i++) {
     if(origin == 0 || table.getInt(i, 7) == origin) {
       String carName2= carNames.getString(i, "CarName");
-      float xValue1 = table.getFloat(i, selectedXColumn);
+      float xValue1 = table.getFloat(i, selectedXColumn);  // references the selected attribute function
       float yValue1 = table.getFloat(i, 5);
       xValues1[i] = xValue1;
       float mean1 = mean(xValues1);
@@ -444,22 +491,24 @@ void filterByOrigin(int origin) {
     plot1.setPoints(newDataPoints1);
   }
     
-}
+} 
   
-// Defining X Axis filters found in above functions
-void filterXAxis(int columnIndex) {
-  int previousSelectedOrigin = selectedOrigin;
-  selectedXColumn = columnIndex;
-  filterByOrigin(previousSelectedOrigin);
-  drawScatterPlot1();
+// Defining X Axis filters found in above button functions
+void filterXAxis(int columnIndex) {              // columnIndex is identified in each of the buttons to select the numbered column attribute
+//  int previousSelectedOrigin = selectedOrigin;
+  selectedXColumn = columnIndex;                 // makes the selected attribute the column index
+ // filterByOrigin(previousSelectedOrigin);        
+  drawScatterPlot1();                            // draw the scatter plot with the newly selected column attribute
+  
+  
   /*
   int columnIndex = getColumnIndex(attribute);
   if (columnIndex >= 0) {
     selectedXColumn = columnIndex;
     drawScatterPlot1(); */
-  }
-
-
+ }
+/*
+// function to try matching the attribute name from the column index to the attribute names in the original table
 int getColumnIndex(String attributeName) {
   String[] columnNames = {"Cylinders", "Displacement", "Horsepower", "Weight", "Acceleration", "Model Year"};
   
@@ -470,6 +519,9 @@ int getColumnIndex(String attributeName) {
   }
   return -1;
 }
+*/
+
+
 float calculateQ1(float[] values) {
   values = sort(values);  // Sort the values
   int n = values.length;  // Get the number of values
